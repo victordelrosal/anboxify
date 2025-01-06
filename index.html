@@ -24,6 +24,7 @@
       {
         id: 1,
         name: "Victor's Surprise Box",
+        image: "images/box01.png",
         description: "A carefully curated mix of books, care items, and local treasures",
         quantity: 10,
         remaining: 3,
@@ -59,6 +60,7 @@ Subscription Details:
       {
         id: 2,
         name: "Ella's Art Box",
+        image: "images/box02.png",
         description: "A monthly selection of unique art supplies and creative inspiration",
         quantity: 15,
         remaining: 5,
@@ -91,6 +93,7 @@ Subscription Details:
       {
         id: 3,
         name: "Garden Fresh Box",
+        image: "images/box03.png",
         description: "Monthly selection of seasonal organic produce straight from our farm",
         quantity: 20,
         remaining: 8,
@@ -374,6 +377,15 @@ Subscription Details:
                   >
                     ×
                   </button>
+                </div>
+
+                {/* Add image here */}
+                <div className="mb-6">
+                  <img 
+                    src={selectedListing.image} 
+                    alt={selectedListing.name}
+                    className="w-full h-64 object-cover rounded-lg shadow-md"
+                  />
                 </div>
 
                 <div className="space-y-4">
