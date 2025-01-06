@@ -329,8 +329,18 @@ Subscription Details:
           <div className="bg-white p-4 border border-gray-300">
             {filteredListings.map((listing) => (
               <div key={listing.id} className="mb-4 pb-4 border-b border-gray-200">
-                <div className="flex justify-between items-start">
-                  <div>
+                <div className="flex justify-between items-start gap-4">
+                  {/* Add thumbnail */}
+                  <div className="flex-shrink-0">
+                    <img 
+                      src={listing.image} 
+                      alt={listing.name}
+                      className="w-24 h-24 object-cover rounded-md shadow-sm"
+                      onClick={() => setSelectedListing(listing)}
+                    />
+                  </div>
+                  
+                  <div className="flex-grow">
                     <span className="text-xs text-gray-500">{listing.date}</span>
                     <h2
                       onClick={() => setSelectedListing(listing)}
@@ -342,11 +352,17 @@ Subscription Details:
                     <p className="text-xs text-gray-600 mt-1">
                       {listing.shipping} • by {listing.maker}
                     </p>
+                    {listing.remaining <= 3 && (
+                      <div className="text-xs text-red-600 mt-1">
+                        Only {listing.remaining} boxes left!
+                      </div>
+                    )}
                   </div>
+
                   <button
                     onClick={() => handleSubscribe(listing.id)}
                     disabled={listing.remaining === 0}
-                    className={`px-3 py-1 text-sm border border-gray-300 
+                    className={`px-3 py-1 text-sm border border-gray-300 flex-shrink-0
                       ${
                         listing.remaining > 0
                           ? 'bg-gray-100 hover:bg-gray-200'
@@ -356,11 +372,6 @@ Subscription Details:
                     {listing.remaining > 0 ? 'subscribe' : 'sold out'}
                   </button>
                 </div>
-                {listing.remaining <= 3 && (
-                  <div className="text-xs text-red-600 mt-1">
-                    Only {listing.remaining} boxes left!
-                  </div>
-                )}
               </div>
             ))}
           </div>
