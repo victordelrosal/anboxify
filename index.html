@@ -10,7 +10,7 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <!-- Babel CDN for JSX transformation -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body class="bg-gray-100 min-h-screen font-mono">
   <!-- Root div for React -->
@@ -465,12 +465,51 @@ Subscription Details:
                   </button>
                 </div>
 
-                {/* Replace form with Stripe Buy Button */}
-                <stripe-buy-button
-                  buy-button-id="buy_btn_1QeHEMEDRHdUKb4l4Mo5li0s"
-                  publishable-key="pk_live_51LSTkfEDRHdUKb4lzHy98nTH1gtJ2SHSGlrL19rwoW9uygLLKqfXO2Se1Aze4aHm90rSnIwwWbbtQcnu19jcMpCt00fYwSHIW9"
-                >
-                </stripe-buy-button>
+                <div className="text-center">
+                  <p className="mb-4">€{subscriptionListing.price}/month • {subscriptionListing.shipping}</p>
+                  <button
+                    onClick={async () => {
+                      try {
+                        const stripe = Stripe('pk_live_51LSTkfEDRHdUKb4lzHy98nTH1gtJ2SHSGlrL19rwoW9uygLLKqfXO2Se1Aze4aHm90rSnIwwWbbtQcnu19jcMpCt00fYwSHIW9');
+                        
+                        // Create product and price
+                        const productResponse = await fetch('http://localhost:3001/api/create-box', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            boxName: subscriptionListing.name,
+                            description: subscriptionListing.description,
+                            price: subscriptionListing.price,
+                            imageUrl: subscriptionListing.image
+                          }),
+                        });
+                        
+                        const { priceId } = await productResponse.json();
+                        
+                        // Create checkout session
+                        const sessionResponse = await fetch('http://localhost:3001/api/create-checkout-session', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            priceId,
+                            successUrl: window.location.origin + '/success',
+                            cancelUrl: window.location.origin + '/cancel'
+                          }),
+                        });
+                        
+                        const { sessionId } = await sessionResponse.json();
+                        
+                        // Redirect to checkout
+                        await stripe.redirectToCheckout({ sessionId });
+                      } catch (error) {
+                        console.error('Error:', error);
+                      }
+                    }}
+                    className="w-full px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    Subscribe Now
+                  </button>
+                </div>
               </div>
             </div>
           )}
